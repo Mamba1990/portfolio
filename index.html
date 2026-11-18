@@ -223,7 +223,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 110px;color:var(--mut);fo
   <header>Hafsa’s AI assistant<button id="x" aria-label="Close">×</button></header>
   <div id="msgs" aria-live="polite"></div>
   <div class="sug"><button>Tell me about the honeypot</button><button>What are her skills?</button><button>How can I contact her?</button></div>
-  <div id="f"><input id="q" placeholder="Ask about skills or projects…" aria-label="Your question" autocomplete="off"><button id="mic" type="button" aria-label="Speak your question">🎙</button><button id="go" type="button">Send</button></div>
+ <div id="f"><input id="q" placeholder="Ask ..." ...><button id="mic" ...>🎙</button><button id="go" ...>Send</button></div>
 </aside>
 
 <script>
@@ -270,7 +270,18 @@ const LOC=[[/honeypot|intrusion|isolation|attack/,'Her honeypot exposes fake HTT
 const local=q=>{const l=q.toLowerCase();for(const [r,a] of LOC)if(r.test(l))return a;return 'I don’t have that detail. Try asking about her projects, skills or experience, or email her at hafsa.daoudim@email.com.'};
 const ai=$('#ai'),msgs=$('#msgs'),fab=$('#fab'),qi=$('#q');let sample=null,voice=false,busy=false;
 function add(c,t){const d=document.createElement('div');d.className='m '+c;d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
-function speak(t){if(!voice||!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';speechSynthesis.speak(u)}
+let voices=[];
+function loadVoices(){voices=speechSynthesis.getVoices()}
+if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+function speak(t){
+  if(!voice||!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  const v=voices.find(x=>/^en/i.test(x.lang)&&/female|samantha|zira|aria|jenny|google uk english female/i.test(x.name))||voices.find(x=>/^en/i.test(x.lang));
+  if(v){u.voice=v;u.lang=v.lang}else{u.lang='en-US'}
+  u.rate=1;u.pitch=1.05;
+  speechSynthesis.speak(u)
+}
 function openAI(o){ai.classList.toggle('open',o);fab.setAttribute('aria-expanded',o);if(o){if(!msgs.children.length)add('ai','Hi! I’m Hafsa’s AI assistant. Ask me about her projects, skills or experience, by typing or with the mic.');qi.focus()}}
 fab.onclick=()=>openAI(!ai.classList.contains('open'));$('#x').onclick=()=>openAI(false);$('#askhero').onclick=()=>openAI(true);
 async function ask(q){q=q.trim();if(!q||busy)return;busy=true;add('me',q);const m=add('ai','…');let a='';
@@ -278,8 +289,17 @@ try{if(!sample&&window.claude&&claude.use)sample=await claude.use('sample');if(s
 a=a||local(q);m.textContent=a;msgs.scrollTop=msgs.scrollHeight;speak(a);busy=false}
 $('#go').onclick=()=>{const v=qi.value;qi.value='';ask(v)};qi.onkeydown=e=>{if(e.key==='Enter')$('#go').click()};
 $$('.sug button').forEach(b=>b.onclick=()=>ask(b.textContent));
+const vol=$('#vol');
+if(!window.speechSynthesis)vol.style.display='none';
+vol.onclick=()=>{
+  voice=!voice;
+  vol.textContent=voice?'🔊':'🔇';
+  vol.setAttribute('aria-pressed',voice);
+  if(!voice)speechSynthesis.cancel();
+  else speak('Voice on. Ask me anything about Hafsa.')
+};
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition,mic=$('#mic');
-if(!SR)mic.style.display='none';else{mic.onclick=()=>{try{const r=new SR();r.lang='en-US';r.onstart=()=>mic.classList.add('on');r.onend=()=>mic.classList.remove('on');r.onresult=e=>{voice=true;ask(e.results[0][0].transcript)};r.start()}catch(e){}}}
+if(!SR)mic.style.display='none';else{mic.onclick=()=>{try{const r=new SR();r.lang='en-US';r.onstart=()=>mic.classList.add('on');r.onend=()=>mic.classList.remove('on');r.onresultr.onresult=e=>{voice=true;vol.textContent='🔊';vol.setAttribute('aria-pressed',true);ask(e.results[0][0].transcript)};r.start()}catch(e){}}}
 </script>
 </body>
 </html>
