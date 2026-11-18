@@ -223,7 +223,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 110px;color:var(--mut);fo
   <header>Hafsa’s AI assistant<button id="x" aria-label="Close">×</button></header>
   <div id="msgs" aria-live="polite"></div>
   <div class="sug"><button>Tell me about the honeypot</button><button>What are her skills?</button><button>How can I contact her?</button></div>
- <div id="f"><input id="q" placeholder="Ask ..." ...><button id="vol" type="button" aria-label="Toggle voice replies" aria-pressed="false">🔇</button></div>
+  <div id="f"><input id="q" placeholder="Ask ..." aria-label="Your question" autocomplete="off"><button id="vol" type="button" aria-label="Toggle voice replies" aria-pressed="false">🔇</button><button id="mic" type="button" aria-label="Speak your question">🎙</button><button id="go" type="button">Send</button></div>
 </aside>
 
 <script>
@@ -261,7 +261,7 @@ const LOC=[[/honeypot|intrusion|isolation|attack/,'Her honeypot exposes fake HTT
 [/airbnb|booking/,'The Airbnb clone is a booking platform with advanced search and user management, built with Python, Flask, MySQL and a REST API.'],
 [/project|built|portfolio|work on/,'She has five projects: an HTTP & SSH honeypot, email security with PGP and S/MIME, Harmonia music streaming, Simple Shell in C, and an Airbnb clone.'],
 [/skill|stack|tech|tool|program/,'Her stack includes Java, Python, C, JavaScript, Node.js, React and Flask, plus Linux, Docker, networking, and security tools like Wireshark, Nmap and OWASP.'],
-[/cert/,'She holds certifications from JobInTech (Cybersecurity), Stanford (Data Science & Cloud), UW via Coursera (Machine LearnFing), ALX Africa (Full Stack) and more.'],
+[/cert/,'She holds certifications from JobInTech (Cybersecurity), Stanford (Data Science & Cloud), UW via Coursera (Machine Learning), ALX Africa (Full Stack) and more.'],
 [/educat|degree|stud|universit|school/,'She has a Bachelor’s in Mathematics and Computer Science (FSR, 2013) and a Professional Bachelor’s in Mathematics Teaching (ENS Rabat, 2015).'],
 [/experience|intern|job|career|bootcamp|jobintech/,'Most recently she completed a cybersecurity and systems engineering bootcamp at JobInTech FSR. Earlier she did internships at SICOPA and Théâtre National Mohammed V, and taught mathematics.'],
 [/language|arabic|french|english|speak/,'She speaks Arabic natively, and French and English fluently.'],
@@ -299,7 +299,7 @@ vol.onclick=()=>{
   else speak('Voice on. Ask me anything about Hafsa.')
 };
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition,mic=$('#mic');
-if(!SR)mic.style.display='none';else{mic.onclick=()=>{try{const r=new SR();r.lang='en-US';r.onstart=()=>mic.classList.add('on');r.onend=()=>mic.classList.remove('on');r.onresultr.onresult=e=>{voice=true;vol.textContent='🔊';vol.setAttribute('aria-pressed',true);ask(e.results[0][0].transcript)};r.start()}catch(e){}}}
+if(!SR)mic.style.display='none';else{mic.onclick=()=>{try{const r=new SR();r.lang='en-US';r.onstart=()=>mic.classList.add('on');r.onend=()=>mic.classList.remove('on');r.onresult=e=>{voice=true;vol.textContent='🔊';vol.setAttribute('aria-pressed',true);ask(e.results[0][0].transcript)};r.start()}catch(e){}}}
 </script>
 </body>
 </html>
